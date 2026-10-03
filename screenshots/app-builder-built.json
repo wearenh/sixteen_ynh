@@ -1,0 +1,38 @@
+{
+  "url": "http://127.0.0.1:8081/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "Sixteen",
+      "hasCanvas": false,
+      "bodyTextLen": 440,
+      "bodyTextHash": "b2d4f0d5556e16a77834a52345a49e17fd3c2035965d51e48c4414e25b0766b9",
+      "bodyTextPrefix": "SIXTEEN 1920 × 1080 Sixteen-cell video wall. Four videos along t",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "Sixteen",
+      "hasCanvas": false,
+      "bodyTextLen": 229,
+      "bodyTextHash": "eee5847ff3a8933e5ab10920e0c7f17030f8623bb215e72ea3a4c06c4d3f1961",
+      "bodyTextPrefix": "SIXTEEN PGM 06 LIVE PGM 01 LIVE CAM 01 02 LIVE CAM 02 03 LIVE CA",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-built.json",
+  "divergesFromBaseline": false,
+  "baselineReasons": []
+}
