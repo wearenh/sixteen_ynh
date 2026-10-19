@@ -3,7 +3,7 @@
 Install from this git repository:
 
 ```bash
-sudo yunohost app install https://github.com/wearenh/sixteen --debug
+sudo yunohost app install https://github.com/wearenh/sixteen_ynh --debug
 ```
 
 Use path `/` on the domain that should serve the wall. A saved wall is then:
@@ -16,7 +16,7 @@ If you install the app at `/tv` instead, the public URL becomes `/tv/tv/<hash>`.
 
 ## Site style
 
-In the webadmin, open Sixteen → Site style. The fields match a domain Features page:
+Site style is not a page in Sixteen. Open the YunoHost webadmin, then Applications → Sixteen → Site style. The fields match a domain Features page:
 
 - Custom title
 - Description
@@ -25,7 +25,13 @@ In the webadmin, open Sixteen → Site style. The fields match a domain Features
 - Custom HTML
 - Custom CSS stylesheet
 
-The wall uses that HTML and CSS. The title and feature image are the Open Graph tags for X, Telegram, Signal, and Nextcloud Collectives. An oEmbed document is also published at `/api/oembed`.
+Saving there writes the branding the wall inherits. The title and feature image are the Open Graph tags for X, Telegram, Signal, and Nextcloud Collectives. An oEmbed document is also published at `/api/oembed`.
+
+If the panel was installed before 1.0~ynh2 and reports that `custom_html` was not initialized, upgrade from this repository:
+
+```bash
+sudo yunohost app upgrade sixteen -u https://github.com/wearenh/sixteen_ynh --debug
+```
 
 ## Walls
 

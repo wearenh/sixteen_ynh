@@ -39,25 +39,35 @@ function AdminPage() {
     }
   }
 
+  if (initial.yunohost) {
+    return (
+      <main className="h-full overflow-y-auto bg-bg text-fg">
+        <div className="mx-auto flex max-w-xl flex-col gap-4 px-6 py-16">
+          <h1 className="text-2xl font-semibold tracking-tight">Site style is in the YunoHost admin</h1>
+          <p className="text-sm leading-relaxed text-muted">
+            Open the YunoHost webadmin, then Applications, Sixteen, Site style. That is the
+            configuration panel. Title, description, feature image, favicon, HTML, and CSS are
+            saved there and inherited by this wall.
+          </p>
+          <Link to="/" className="text-sm text-fg underline-offset-2 hover:underline">
+            Back to the wall
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="h-full overflow-y-auto bg-[#f4f6f8] text-[#1c2833]">
       <div className="mx-auto flex max-w-3xl flex-col gap-6 px-5 py-8">
         <div>
-          <p className="text-xs tracking-wide text-[#607080] uppercase">Domains / Features</p>
+          <p className="text-xs tracking-wide text-[#607080] uppercase">Preview only</p>
           <h1 className="mt-1 text-2xl font-semibold tracking-tight">Site style</h1>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[#4d5b6a]">
-            Same fields as a YunoHost domain Features page. Custom HTML and CSS style the wall.
-            The title and feature image are what X, Telegram, Signal, and Nextcloud Collectives
-            show when a /tv/… link is shared.
+            This page is only for the hosted preview. On YunoHost the same fields live in the
+            webadmin, under Applications, Sixteen, Site style.
           </p>
         </div>
-
-        {initial.yunohost ? (
-          <p className="rounded-md border border-[#d5dde6] bg-white px-4 py-3 text-sm leading-relaxed">
-            This server is YunoHost. Change these in the webadmin: Sixteen → Site style. That
-            panel writes the same settings this page shows.
-          </p>
-        ) : null}
 
         <form
           className="flex flex-col gap-5 rounded-md border border-[#d5dde6] bg-white p-5"

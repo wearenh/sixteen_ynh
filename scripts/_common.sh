@@ -2,6 +2,19 @@
 
 nodejs_version=22
 
+# YunoHost turns default = "" into "no default". A question in that state
+# must already exist in settings.yml or the webadmin panel will not open.
+ensure_style_settings() {
+    site_title="${site_title:-Sixteen}"
+    site_description="${site_description:-A 16-cell video wall.}"
+    custom_html="${custom_html-}"
+    custom_css="${custom_css-}"
+    ynh_app_setting_set --key=site_title --value="$site_title"
+    ynh_app_setting_set --key=site_description --value="$site_description"
+    ynh_app_setting_set --key=custom_html --value="$custom_html"
+    ynh_app_setting_set --key=custom_css --value="$custom_css"
+}
+
 write_branding() {
     mkdir -p "$data_dir/brand"
     site_title="${site_title:-Sixteen}"

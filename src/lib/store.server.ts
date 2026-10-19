@@ -198,7 +198,7 @@ export function saveBranding(input: {
   clearFavicon?: boolean;
 }) {
   if (process.env.SIXTEEN_YUNOHOST === "1") {
-    throw new Error("On YunoHost, set the title, images, HTML, and CSS in the app's configuration panel.");
+    throw new Error("Site style is set in the YunoHost webadmin: Applications → Sixteen → Site style.");
   }
   if (input.clearFeature) {
     for (const name of readdirSync(brandDir)) {

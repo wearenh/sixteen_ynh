@@ -23,6 +23,7 @@ chown -R "$app:$app" "$install_dir"
 ynh_app_setting_set --key=nodejs_dir --value="$nodejs_dir"
 ynh_app_setting_set --key=path_with_nodejs --value="$path_with_nodejs"
 
+ensure_style_settings
 write_branding
 
 ynh_script_progression "Upgrading NGINX and systemd..."

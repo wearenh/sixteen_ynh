@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
+import { useLoaderData, useNavigate } from "@tanstack/react-router";
 import { Download, Fullscreen, HelpCircle, Link2, Palette, Pencil, RotateCcw, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,6 +31,7 @@ export function Toolbar({ onFullscreen, hidden }: ToolbarProps) {
   const attachRemote = useWallStore((s) => s.attachRemote);
   const fileRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+  const brand = useLoaderData({ from: "__root__" });
   const [saving, setSaving] = useState(false);
   const canEdit = !remoteHash || Boolean(editToken);
 
@@ -121,16 +122,18 @@ export function Toolbar({ onFullscreen, hidden }: ToolbarProps) {
             <Link2 />
           </Button>
         ) : null}
-        <Button
-          type="button"
-          size="icon-sm"
-          variant="ghost"
-          onClick={() => void navigate({ to: "/admin" })}
-          aria-label="Site style"
-          title="Site style"
-        >
-          <Palette />
-        </Button>
+        {brand.yunohost ? null : (
+          <Button
+            type="button"
+            size="icon-sm"
+            variant="ghost"
+            onClick={() => void navigate({ to: "/admin" })}
+            aria-label="Site style"
+            title="Site style"
+          >
+            <Palette />
+          </Button>
+        )}
         <Button
           type="button"
           size="icon-sm"
@@ -234,9 +237,10 @@ export function HelpDialog({ container }: { container?: HTMLElement | null }) {
             <span className="font-mono text-fg">AAPL, BTC, ETH</span>.
           </li>
           <li>
-            Site style — title, feature image, favicon, HTML, and CSS — is the same set of fields
-            as a YunoHost domain Features page. Shared links use that title and image on X,
-            Telegram, Signal, and Nextcloud Collectives.
+            Site style — title, feature image, favicon, HTML, and CSS — is the YunoHost
+            application config panel: webadmin, Applications, Sixteen, Site style. It is not a
+            page in this app. Shared links use that title and image on X, Telegram, Signal, and
+            Nextcloud Collectives.
           </li>
           <li>
             Download saves an HTML file that opens the wall in any browser. Upload reads that file

@@ -7,13 +7,13 @@ name = "Sixteen"
 description.en = "16-cell video wall with a public link for each saved layout"
 description.fr = "Mur vidéo de 16 cases, avec un lien public pour chaque mur enregistré"
 
-version = "1.0~ynh1"
+version = "1.0~ynh2"
 
 maintainers = []
 
 [upstream]
 license = "AGPL-3.0-or-later"
-code = "https://github.com/wearenh/sixteen"
+code = "https://github.com/wearenh/sixteen_ynh"
 
 [integration]
 yunohost = ">= 12.1.17"
