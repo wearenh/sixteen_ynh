@@ -1,0 +1,50 @@
+version = "1.0"
+
+[main]
+name.en = "Site style"
+name.fr = "Style du site"
+services = ["__APP__"]
+
+    [main.features]
+    name.en = "Features"
+    name.fr = "Fonctionnalités"
+
+        [main.features.site_title]
+        ask.en = "Custom title"
+        ask.fr = "Titre personnalisé"
+        type = "string"
+        default = "Sixteen"
+        help.en = "Shown as the site name, and as the title when a /tv/<hash> link is shared."
+
+        [main.features.site_description]
+        ask.en = "Description"
+        ask.fr = "Description"
+        type = "text"
+        default = "A 16-cell video wall."
+        help.en = "The sentence under the title on X, Telegram, Signal, and Nextcloud Collectives."
+
+        [main.features.feature_image]
+        ask.en = "Feature image"
+        ask.fr = "Image de partage"
+        type = "file"
+        help.en = "PNG, JPEG, WEBP, or SVG. This is the preview image on a shared link."
+
+        [main.features.favicon]
+        ask.en = "Favicon"
+        ask.fr = "Favicon"
+        type = "file"
+        help.en = "PNG, SVG, WEBP, or ICO. Shown in the browser tab."
+
+        [main.features.custom_html]
+        ask.en = "Custom HTML"
+        ask.fr = "HTML personnalisé"
+        type = "text"
+        default = ""
+        help.en = "You can use HTML. It is placed above the wall, the same way a domain's custom public intro works."
+
+        [main.features.custom_css]
+        ask.en = "Custom CSS stylesheet"
+        ask.fr = "Feuille de style CSS personnalisée"
+        type = "text"
+        default = ""
+        help.en = "Extra CSS applied to the wall and the rest of the site."

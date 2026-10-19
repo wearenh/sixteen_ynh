@@ -10,33 +10,79 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as ApiOembedRouteImport } from './routes/api/oembed'
+import { Route as TvHashRouteImport } from './routes/tv/$hash'
+import { Route as ApiBrandKindRouteImport } from './routes/api/brand/$kind'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiOembedRoute = ApiOembedRouteImport.update({
+  id: '/api/oembed',
+  path: '/api/oembed',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TvHashRoute = TvHashRouteImport.update({
+  id: '/tv/$hash',
+  path: '/tv/$hash',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiBrandKindRoute = ApiBrandKindRouteImport.update({
+  id: '/api/brand/$kind',
+  path: '/api/brand/$kind',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/api/oembed': typeof ApiOembedRoute
+  '/tv/$hash': typeof TvHashRoute
+  '/api/brand/$kind': typeof ApiBrandKindRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/api/oembed': typeof ApiOembedRoute
+  '/tv/$hash': typeof TvHashRoute
+  '/api/brand/$kind': typeof ApiBrandKindRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/api/oembed': typeof ApiOembedRoute
+  '/tv/$hash': typeof TvHashRoute
+  '/api/brand/$kind': typeof ApiBrandKindRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/admin' | '/api/oembed' | '/tv/$hash' | '/api/brand/$kind'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/admin' | '/api/oembed' | '/tv/$hash' | '/api/brand/$kind'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/api/oembed'
+    | '/tv/$hash'
+    | '/api/brand/$kind'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
+  ApiOembedRoute: typeof ApiOembedRoute
+  TvHashRoute: typeof TvHashRoute
+  ApiBrandKindRoute: typeof ApiBrandKindRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +94,43 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/oembed': {
+      id: '/api/oembed'
+      path: '/api/oembed'
+      fullPath: '/api/oembed'
+      preLoaderRoute: typeof ApiOembedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tv/$hash': {
+      id: '/tv/$hash'
+      path: '/tv/$hash'
+      fullPath: '/tv/$hash'
+      preLoaderRoute: typeof TvHashRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/brand/$kind': {
+      id: '/api/brand/$kind'
+      path: '/api/brand/$kind'
+      fullPath: '/api/brand/$kind'
+      preLoaderRoute: typeof ApiBrandKindRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
+  ApiOembedRoute: ApiOembedRoute,
+  TvHashRoute: TvHashRoute,
+  ApiBrandKindRoute: ApiBrandKindRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

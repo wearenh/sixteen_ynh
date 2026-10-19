@@ -13,6 +13,9 @@ type WallState = {
   editingId: ActiveCellId | null;
   helpOpen: boolean;
   hydrated: boolean;
+  remoteHash: string | null;
+  editToken: string | null;
+  publicUrl: string | null;
   hydrate: () => void;
   setEditMode: (value: boolean) => void;
   openEditor: (id: ActiveCellId) => void;
@@ -20,6 +23,7 @@ type WallState = {
   setHelpOpen: (value: boolean) => void;
   updateCell: (id: ActiveCellId, patch: Partial<CellConfig>) => void;
   replaceCells: (cells: Record<ActiveCellId, CellConfig>) => void;
+  attachRemote: (hash: string, cells: Record<ActiveCellId, CellConfig>, editToken: string | null, url: string) => void;
   reset: () => void;
 };
 
@@ -84,7 +88,14 @@ export const useWallStore = create<WallState>((set, get) => ({
   editingId: null,
   helpOpen: false,
   hydrated: false,
+  remoteHash: null,
+  editToken: null,
+  publicUrl: null,
   hydrate: () => {
+    if (get().remoteHash) {
+      set({ hydrated: true });
+      return;
+    }
     let helpOpen = false;
     let cells = cloneDefaults();
     try {
@@ -121,16 +132,27 @@ export const useWallStore = create<WallState>((set, get) => ({
       ...get().cells,
       [id]: { ...get().cells[id], ...patch, id },
     };
-    persist(cells);
+    if (!get().remoteHash) persist(cells);
     set({ cells });
   },
   replaceCells: (cells) => {
-    persist(cells);
+    if (!get().remoteHash) persist(cells);
     set({ cells, editingId: null });
+  },
+  attachRemote: (hash, cells, editToken, url) => {
+    set({
+      cells,
+      remoteHash: hash,
+      editToken,
+      publicUrl: url,
+      hydrated: true,
+      editingId: null,
+      editMode: false,
+    });
   },
   reset: () => {
     const cells = cloneDefaults();
-    persist(cells);
+    if (!get().remoteHash) persist(cells);
     set({ cells, editingId: null });
   },
 }));

@@ -1,0 +1,12 @@
+#!/bin/bash
+
+source /usr/share/yunohost/helpers
+
+ynh_print_info "Backing up the install directory..."
+ynh_backup "$install_dir"
+
+ynh_print_info "Backing up the data directory..."
+ynh_backup "$data_dir"
+
+ynh_backup "/etc/nginx/conf.d/$domain.d/$app.conf"
+ynh_backup "/etc/systemd/system/$app.service"

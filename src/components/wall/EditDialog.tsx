@@ -22,7 +22,7 @@ import {
 import { cn, padCell } from "@/lib/utils";
 import { useWallStore } from "@/lib/wall-store";
 
-const TYPES: CellType[] = ["video", "iframe", "image", "html", "clock", "board"];
+const TYPES: CellType[] = ["video", "iframe", "image", "html", "clock", "board", "prices"];
 
 export function EditDialog({ container }: { container?: HTMLElement | null }) {
   const editingId = useWallStore((s) => s.editingId);
@@ -72,7 +72,7 @@ export function EditDialog({ container }: { container?: HTMLElement | null }) {
             <div className="flex flex-col gap-4">
               <fieldset className="flex flex-col gap-2">
                 <Label>Type</Label>
-                <div className="grid grid-cols-3 gap-1">
+                <div className="grid grid-cols-4 gap-1">
                   {TYPES.map((type) => (
                     <button
                       key={type}
@@ -126,6 +126,18 @@ export function EditDialog({ container }: { container?: HTMLElement | null }) {
                           ? "https://…/embed/…  or a playlist URL"
                           : "mp4, YouTube, playlist, or PeerTube"
                     }
+                  />
+                </div>
+              ) : null}
+
+              {draft.type === "prices" ? (
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor="cell-symbols">Tickers</Label>
+                  <Input
+                    id="cell-symbols"
+                    value={draft.symbols ?? ""}
+                    onChange={(e) => setDraft({ ...draft, symbols: e.target.value })}
+                    placeholder="AAPL, MSFT, BTC, ETH"
                   />
                 </div>
               ) : null}

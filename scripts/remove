@@ -1,0 +1,14 @@
+#!/bin/bash
+
+source /usr/share/yunohost/helpers
+
+ynh_systemctl --service="$app" --action=stop
+yunohost service remove "$app"
+ynh_config_remove_nginx
+ynh_config_remove_systemd
+
+if declare -F ynh_nodejs_remove >/dev/null; then
+    ynh_nodejs_remove
+fi
+
+ynh_script_progression "Removal of $app completed"

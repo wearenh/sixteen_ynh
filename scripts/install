@@ -1,0 +1,41 @@
+#!/bin/bash
+
+source /usr/share/yunohost/helpers
+source _common.sh
+
+ynh_app_setting_set --key=nodejs_version --value="$nodejs_version"
+ynh_nodejs_install
+
+ynh_script_progression "Setting up source files..."
+cp -a "$YNH_APP_BASEDIR/." "$install_dir/"
+chown -R "$app:$app" "$install_dir"
+
+ynh_script_progression "Building Sixteen..."
+pushd "$install_dir"
+    PATH="$path_with_nodejs:$PATH"
+    ynh_exec_as_app npm ci
+    ynh_exec_as_app env NITRO_PRESET=node-server npm run build
+popd
+chown -R "$app:$app" "$install_dir"
+
+ynh_app_setting_set --key=nodejs_dir --value="$nodejs_dir"
+ynh_app_setting_set --key=path_with_nodejs --value="$path_with_nodejs"
+
+ynh_script_progression "Configuring the site style..."
+write_branding
+
+mkdir -p "/var/log/$app"
+touch "/var/log/$app/$app.log"
+chown -R "$app:$app" "/var/log/$app"
+
+ynh_script_progression "Configuring NGINX..."
+ynh_config_add_nginx
+
+ynh_script_progression "Configuring a systemd service..."
+ynh_config_add_systemd
+yunohost service add "$app" --description="Sixteen video wall" --log="/var/log/$app/$app.log"
+
+ynh_script_progression "Starting Sixteen..."
+ynh_systemctl --service="$app" --action=start
+
+ynh_script_progression "Installation of $app completed"

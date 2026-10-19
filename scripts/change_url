@@ -1,0 +1,6 @@
+#!/bin/bash
+
+source /usr/share/yunohost/helpers
+
+ynh_change_url_nginx_config
+ynh_systemctl --service="$app" --action=restart

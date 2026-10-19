@@ -1,0 +1,11 @@
+#!/bin/bash
+
+source /usr/share/yunohost/helpers
+source _common.sh
+
+set__site_title() { write_branding; }
+set__site_description() { write_branding; }
+set__custom_html() { write_branding; }
+set__custom_css() { write_branding; }
+set__feature_image() { write_branding; }
+set__favicon() { write_branding; }

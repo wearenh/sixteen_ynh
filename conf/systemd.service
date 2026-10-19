@@ -1,0 +1,31 @@
+[Unit]
+Description=Sixteen video wall
+After=network.target
+
+[Service]
+Type=simple
+User=__APP__
+Group=__APP__
+WorkingDirectory=__INSTALL_DIR__/
+Environment="NODE_ENV=production"
+Environment="PORT=__PORT__"
+Environment="NITRO_PORT=__PORT__"
+Environment="HOST=127.0.0.1"
+Environment="NITRO_HOST=127.0.0.1"
+Environment="SIXTEEN_DATA_DIR=__DATA_DIR__"
+Environment="SIXTEEN_YUNOHOST=1"
+Environment="PATH=__PATH_WITH_NODEJS__"
+ExecStart=__NODEJS_DIR__/node __INSTALL_DIR__/.output/server/index.mjs
+StandardOutput=append:/var/log/__APP__/__APP__.log
+StandardError=inherit
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=full
+ProtectHome=false
+ReadWritePaths=__DATA_DIR__
+
+[Install]
+WantedBy=multi-user.target

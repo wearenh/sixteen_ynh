@@ -20,7 +20,7 @@ function fitStage(w: number, h: number) {
   return { width: Math.max(0, width), height: Math.max(0, height) };
 }
 
-export function Sixteen() {
+export function Sixteen({ hash }: { hash?: string }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<HTMLDivElement>(null);
   const [box, setBox] = useState({ width: WALL_WIDTH, height: WALL_HEIGHT });
@@ -35,6 +35,10 @@ export function Sixteen() {
   const closeEditor = useWallStore((s) => s.closeEditor);
   const hydrate = useWallStore((s) => s.hydrate);
   const setHelpOpen = useWallStore((s) => s.setHelpOpen);
+  const remoteHash = useWallStore((s) => s.remoteHash);
+  const editToken = useWallStore((s) => s.editToken);
+  const canEdit = !remoteHash || Boolean(editToken);
+  const liveEdit = editMode && canEdit;
 
   useEffect(() => {
     hydrate();
@@ -115,25 +119,28 @@ export function Sixteen() {
   }
 
   function onEdit(id: ActiveCellId) {
+    if (!canEdit) return;
     openEditor(id);
   }
+
+  const ready = !hash || remoteHash === hash;
 
   return (
     <div
       ref={wrapRef}
-      className="sixteen-root flex h-dvh w-dvw flex-col overflow-hidden bg-bg text-fg"
+      className="sixteen-root flex h-full w-full min-h-0 flex-col overflow-hidden bg-bg text-fg"
     >
-      <Toolbar onFullscreen={toggleFullscreen} hidden={fullscreen} />
+      <Toolbar onFullscreen={toggleFullscreen} hidden={fullscreen || !ready} />
 
       <div ref={viewRef} className="relative min-h-0 flex-1">
-        {stacked ? (
+        {!ready ? null : stacked ? (
           <div className="h-full overflow-y-auto overflow-x-hidden">
-            <WallStack cells={cells} editMode={editMode} onEdit={onEdit} />
+            <WallStack cells={cells} editMode={liveEdit} onEdit={onEdit} />
           </div>
         ) : (
           <div className="flex h-full w-full items-center justify-center overflow-hidden">
             <div className="bg-bg" style={{ width: box.width, height: box.height }}>
-              <WallTable cells={cells} editMode={editMode} onEdit={onEdit} />
+              <WallTable cells={cells} editMode={liveEdit} onEdit={onEdit} />
             </div>
           </div>
         )}

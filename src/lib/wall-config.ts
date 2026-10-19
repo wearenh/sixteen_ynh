@@ -30,7 +30,7 @@
  * inside a sandboxed iframe, so you can drop in widgets or snippets.
  */
 
-export type CellType = "video" | "iframe" | "image" | "html" | "clock" | "board";
+export type CellType = "video" | "iframe" | "image" | "html" | "clock" | "board" | "prices";
 
 export type CellConfig = {
   id: number;
@@ -38,6 +38,7 @@ export type CellConfig = {
   label: string;
   src?: string;
   html?: string;
+  symbols?: string;
   muted?: boolean;
   loop?: boolean;
   autoplay?: boolean;
@@ -117,6 +118,7 @@ export const TYPE_HELP: Record<CellType, string> = {
   html: "Raw HTML / CSS / JS, rendered in a sandbox",
   clock: "Live clock and date — no source needed",
   board: "Director board with source counts and stage lock",
+  prices: "Stock and crypto tickers, comma separated. Example: AAPL, MSFT, BTC, ETH",
 };
 
 export function isActiveCellId(id: number): id is ActiveCellId {

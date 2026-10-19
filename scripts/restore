@@ -1,0 +1,27 @@
+#!/bin/bash
+
+source /usr/share/yunohost/helpers
+source _common.sh
+
+ynh_script_progression "Restoring the installation and data..."
+ynh_restore "$install_dir"
+ynh_restore "$data_dir"
+
+ynh_nodejs_install
+ynh_app_setting_set --key=nodejs_dir --value="$nodejs_dir"
+ynh_app_setting_set --key=path_with_nodejs --value="$path_with_nodejs"
+
+mkdir -p "/var/log/$app"
+chown -R "$app:$app" "/var/log/$app"
+
+ynh_script_progression "Restoring NGINX and systemd..."
+ynh_restore "/etc/nginx/conf.d/$domain.d/$app.conf"
+ynh_restore "/etc/systemd/system/$app.service"
+systemctl daemon-reload
+yunohost service add "$app" --description="Sixteen video wall" --log="/var/log/$app/$app.log" || true
+
+ynh_script_progression "Reloading NGINX and starting Sixteen..."
+ynh_systemctl --service=nginx --action=reload
+ynh_systemctl --service="$app" --action=start
+
+ynh_script_progression "Restoration completed"

@@ -3,6 +3,7 @@ import { Pencil, Play } from "lucide-react";
 import type { CellConfig } from "@/lib/wall-config";
 import { wrapHtmlDocument } from "@/lib/html-frame";
 import { parseMedia, resolveEmbed } from "@/lib/media";
+import { getQuotesPublic } from "@/lib/wall-api";
 import { cn, padCell } from "@/lib/utils";
 
 type FrameProps = {
@@ -57,6 +58,8 @@ function FrameBody({
       return <ClockBody />;
     case "board":
       return <BoardBody />;
+    case "prices":
+      return <PricesBody cell={cell} />;
     default:
       return <EmptyBody label="Unknown type" />;
   }
@@ -167,6 +170,80 @@ function PlayerFrame({ title, src }: { title: string; src: string }) {
       />
     </>
   );
+}
+
+function PricesBody({ cell }: { cell: CellConfig }) {
+  const symbols = cell.symbols || "";
+  const [quotes, setQuotes] = useState<
+    Array<{ symbol: string; name: string; price: number | null; change: number | null }>
+  >([]);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    if (!symbols.trim()) return;
+    let stop = false;
+    const load = () => {
+      getQuotesPublic({ data: { symbols } })
+        .then((rows) => {
+          if (!stop) {
+            setQuotes(rows);
+            setFailed(false);
+          }
+        })
+        .catch(() => {
+          if (!stop) setFailed(true);
+        });
+    };
+    load();
+    const id = window.setInterval(load, 60_000);
+    return () => {
+      stop = true;
+      window.clearInterval(id);
+    };
+  }, [symbols]);
+
+  if (!symbols.trim()) return <EmptyBody label="Add tickers, like AAPL, BTC, ETH" />;
+  if (failed && quotes.length === 0) return <EmptyBody label="Prices unavailable" />;
+
+  return (
+    <ul className="absolute inset-0 flex flex-col justify-center gap-0 overflow-auto px-4 pt-11 pb-3">
+      {quotes.map((quote) => (
+        <li key={quote.symbol} className="flex items-baseline justify-between gap-3 border-b border-border py-1.5">
+          <span className="min-w-0">
+            <span className="font-mono text-xs tracking-wide text-fg">{quote.symbol}</span>
+            <span className="ml-2 hidden truncate text-xs text-subtle sm:inline">{quote.name}</span>
+          </span>
+          <span className="flex items-baseline gap-3">
+            <span className="font-mono text-sm text-fg tabular-nums">{formatPrice(quote.price)}</span>
+            <span
+              className={
+                quote.change == null
+                  ? "font-mono text-xs text-subtle tabular-nums"
+                  : quote.change >= 0
+                    ? "font-mono text-xs text-live tabular-nums"
+                    : "font-mono text-xs text-danger tabular-nums"
+              }
+            >
+              {formatChange(quote.change)}
+            </span>
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function formatPrice(price: number | null) {
+  if (price == null) return "—";
+  if (price >= 1000) return price.toLocaleString(undefined, { maximumFractionDigits: 0 });
+  if (price >= 1) return price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return price.toLocaleString(undefined, { maximumFractionDigits: 6 });
+}
+
+function formatChange(change: number | null) {
+  if (change == null) return "—";
+  const sign = change > 0 ? "+" : "";
+  return `${sign}${change.toFixed(1)}%`;
 }
 
 function ImageBody({ cell }: { cell: CellConfig }) {

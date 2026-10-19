@@ -1,5 +1,6 @@
-import { useRef } from "react";
-import { Download, Fullscreen, HelpCircle, Pencil, RotateCcw, Upload } from "lucide-react";
+import { useRef, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
+import { Download, Fullscreen, HelpCircle, Link2, Palette, Pencil, RotateCcw, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { parseWallFile, useWallStore } from "@/lib/wall-store";
 import { renderWallHtml } from "@/lib/wall-html";
+import { publishWall } from "@/lib/wall-api";
 
 type ToolbarProps = {
   onFullscreen: () => void;
@@ -23,7 +25,14 @@ export function Toolbar({ onFullscreen, hidden }: ToolbarProps) {
   const reset = useWallStore((s) => s.reset);
   const cells = useWallStore((s) => s.cells);
   const replaceCells = useWallStore((s) => s.replaceCells);
+  const remoteHash = useWallStore((s) => s.remoteHash);
+  const editToken = useWallStore((s) => s.editToken);
+  const publicUrl = useWallStore((s) => s.publicUrl);
+  const attachRemote = useWallStore((s) => s.attachRemote);
   const fileRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
+  const [saving, setSaving] = useState(false);
+  const canEdit = !remoteHash || Boolean(editToken);
 
   function exportWall() {
     const blob = new Blob([renderWallHtml(cells)], { type: "text/html" });
@@ -47,6 +56,31 @@ export function Toolbar({ onFullscreen, hidden }: ToolbarProps) {
     reader.readAsText(file);
   }
 
+  async function saveLink() {
+    if (!canEdit) {
+      window.alert("Only the creator of this wall can change it.");
+      return;
+    }
+    setSaving(true);
+    try {
+      const saved = await publishWall({
+        data: { cells, hash: remoteHash ?? undefined, editToken: editToken ?? undefined },
+      });
+      localStorage.setItem(`sixteen-edit:${saved.hash}`, saved.editToken);
+      attachRemote(saved.hash, cells, saved.editToken, saved.url);
+      if (saved.created) {
+        window.alert(`Saved.\n\n${saved.url}\n\nEdit key, keep this. Anyone with it can change the wall:\n${saved.editToken}`);
+      }
+      if (window.location.pathname !== saved.path) {
+        void navigate({ to: "/tv/$hash", params: { hash: saved.hash } });
+      }
+    } catch (error) {
+      window.alert(error instanceof Error ? error.message : "Could not save this wall.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
   return (
     <header
       className={
@@ -57,8 +91,8 @@ export function Toolbar({ onFullscreen, hidden }: ToolbarProps) {
     >
       <div className="flex items-baseline gap-3">
         <p className="text-sm font-medium tracking-widest text-fg uppercase">Sixteen</p>
-        <p className="hidden font-mono text-xs tracking-wide text-subtle uppercase sm:block">
-          1920 × 1080
+        <p className="hidden max-w-xs truncate font-mono text-xs tracking-wide text-subtle sm:block">
+          {publicUrl ? publicUrl.replace(/^https?:\/\/[^/]+/, "") : "1920 × 1080"}
         </p>
       </div>
       <div className="flex items-center gap-1">
@@ -66,12 +100,36 @@ export function Toolbar({ onFullscreen, hidden }: ToolbarProps) {
           type="button"
           size="icon-sm"
           variant={editMode ? "default" : "ghost"}
-          onClick={() => setEditMode(!editMode)}
+          onClick={() => canEdit && setEditMode(!editMode)}
           aria-pressed={editMode}
           aria-label={editMode ? "Exit edit mode" : "Enter edit mode"}
-          title="Edit frames (E)"
+          title={canEdit ? "Edit frames (E)" : "Only the creator can edit this wall"}
+          disabled={!canEdit}
         >
           <Pencil />
+        </Button>
+        {canEdit ? (
+          <Button
+            type="button"
+            size="icon-sm"
+            variant="ghost"
+            onClick={() => void saveLink()}
+            disabled={saving}
+            aria-label="Save a public link"
+            title="Save a public link"
+          >
+            <Link2 />
+          </Button>
+        ) : null}
+        <Button
+          type="button"
+          size="icon-sm"
+          variant="ghost"
+          onClick={() => void navigate({ to: "/admin" })}
+          aria-label="Site style"
+          title="Site style"
+        >
+          <Palette />
         </Button>
         <Button
           type="button"
@@ -166,12 +224,23 @@ export function HelpDialog({ container }: { container?: HTMLElement | null }) {
             screen and the bar hides. Press F again or Escape to leave.
           </li>
           <li>
-            Video cells take an MP4, a YouTube video or playlist, Vimeo, or a PeerTube video or
-            playlist. Iframe cells take any embed URL.
+            <span className="font-medium text-fg">Save link</span> — stores this wall and opens{" "}
+            <span className="font-mono text-fg">/tv/…</span>. Keep the edit key. Without
+            it, the page is view only.
           </li>
           <li>
-            Edits stay in this browser. Download saves an HTML file that opens the wall in any
-            browser. Upload reads that file back. Reset restores the sample wall.
+            Video cells take an MP4, a YouTube video or playlist, Vimeo, or a PeerTube video or
+            playlist. Iframe cells take any embed URL. Prices cells take tickers such as{" "}
+            <span className="font-mono text-fg">AAPL, BTC, ETH</span>.
+          </li>
+          <li>
+            Site style — title, feature image, favicon, HTML, and CSS — is the same set of fields
+            as a YunoHost domain Features page. Shared links use that title and image on X,
+            Telegram, Signal, and Nextcloud Collectives.
+          </li>
+          <li>
+            Download saves an HTML file that opens the wall in any browser. Upload reads that file
+            back. Reset restores the sample wall.
           </li>
         </ul>
       </DialogContent>
