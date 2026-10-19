@@ -27,7 +27,7 @@ Site style is not a page in Sixteen. Open the YunoHost webadmin, then Applicatio
 
 Saving there writes the branding the wall inherits. The title and feature image are the Open Graph tags for X, Telegram, Signal, and Nextcloud Collectives. An oEmbed document is also published at `/api/oembed`.
 
-If the panel was installed before 1.0~ynh2 and reports that `custom_html` was not initialized, upgrade from this repository:
+If the panel reports that `custom_html` was not initialized, upgrade to 1.0~ynh3 or newer:
 
 ```bash
 sudo yunohost app upgrade sixteen -u https://github.com/wearenh/sixteen_ynh --debug

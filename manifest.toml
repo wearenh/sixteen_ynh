@@ -7,7 +7,7 @@ name = "Sixteen"
 description.en = "16-cell video wall with a public link for each saved layout"
 description.fr = "Mur vidéo de 16 cases, avec un lien public pour chaque mur enregistré"
 
-version = "1.0~ynh2"
+version = "1.0~ynh3"
 
 maintainers = []
 

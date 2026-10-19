@@ -15,6 +15,17 @@ ensure_style_settings() {
     ynh_app_setting_set --key=custom_css --value="$custom_css"
 }
 
+# Save every style field, then rewrite branding.json. Custom setters replace
+# YunoHost's default writer, so the setting has to be stored here or the
+# next time the panel opens the question looks uninitialized.
+persist_style() {
+    ynh_app_setting_set --key=site_title --value="${site_title:-Sixteen}"
+    ynh_app_setting_set --key=site_description --value="${site_description:-A 16-cell video wall.}"
+    ynh_app_setting_set --key=custom_html --value="${custom_html-}"
+    ynh_app_setting_set --key=custom_css --value="${custom_css-}"
+    write_branding
+}
+
 write_branding() {
     mkdir -p "$data_dir/brand"
     site_title="${site_title:-Sixteen}"

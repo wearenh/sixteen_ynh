@@ -1,11 +1,17 @@
 #!/bin/bash
 
 source /usr/share/yunohost/helpers
-source _common.sh
+source "$(dirname "$0")/_common.sh"
 
-set__site_title() { write_branding; }
-set__site_description() { write_branding; }
-set__custom_html() { write_branding; }
-set__custom_css() { write_branding; }
+ynh_abort_if_errors
+
+set__site_title() { persist_style; }
+set__site_description() { persist_style; }
+set__custom_html() { persist_style; }
+set__custom_css() { persist_style; }
 set__feature_image() { write_branding; }
 set__favicon() { write_branding; }
+
+# "show" must print every question. Without this, the webadmin treats
+# custom_html as uninitialized even when it is already in settings.yml.
+ynh_app_config_run "$1"
